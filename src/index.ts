@@ -25,3 +25,6 @@ export type {
 export { KnowledgeRegistryService } from './services/knowledge-registry.js';
 export type { KnowledgeUnitHydrator } from './services/knowledge-registry.js';
 export { UserProgressService } from './services/user-progress.js';
+export { SpacedRepetitionService } from './services/spaced-repetition.js';
+export { ScheduleService } from './services/schedule.js';
+export type { ScheduleKnowledgeUnit, ScheduleParams, ScheduleResult } from './services/schedule.js';

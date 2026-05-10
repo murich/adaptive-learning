@@ -7,6 +7,7 @@ import {
   ICacheClient,
 } from '../interfaces/index.js';
 import { IUserProgressService, MasteryOverview } from './interfaces.js';
+import { SpacedRepetitionService } from './spaced-repetition.js';
 
 /**
  * Records user responses, updates mastery levels, and provides analytics.
@@ -48,16 +49,32 @@ export class UserProgressService implements IUserProgressService {
       currentMastery = Math.max(0.0, currentMastery - 0.05);
     }
 
-    const now = new Date().toISOString();
-    await this.progressRepo.upsertState({
+    // Build current state for SM-2 calculation
+    const currentState = new UserKnowledgeState({
       userId: response.userId,
       knowledgeUnitId: response.knowledgeUnitId,
       masteryLevel: currentMastery,
       easinessFactor: existing ? existing.easiness_factor : 2.5,
       intervalDays: existing ? existing.interval_days : 1,
-      reviewCount: (existing ? existing.review_count : 0) + 1,
-      lastPracticed: now,
+      reviewCount: existing ? existing.review_count : 0,
+      lastPracticed: existing ? existing.last_practiced : null,
       nextReviewDate: existing ? existing.next_review_date : null,
+    });
+
+    // Apply SM-2 algorithm for scheduling
+    const sm2 = new SpacedRepetitionService();
+    const updatedState = sm2.calculateNextReview(currentState, response.qualityScore);
+
+    // Persist with SM-2 scheduling + mastery level
+    await this.progressRepo.upsertState({
+      userId: response.userId,
+      knowledgeUnitId: response.knowledgeUnitId,
+      masteryLevel: currentMastery,
+      easinessFactor: updatedState.easinessFactor,
+      intervalDays: updatedState.intervalDays,
+      reviewCount: updatedState.reviewCount,
+      lastPracticed: updatedState.lastPracticed,
+      nextReviewDate: updatedState.nextReviewDate,
     });
 
     // Invalidate cache

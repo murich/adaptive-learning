@@ -7,4 +7,6 @@ export { KnowledgeType, DependencyType } from './models/enums.js';
 // Service implementations
 export { KnowledgeRegistryService } from './services/knowledge-registry.js';
 export { UserProgressService } from './services/user-progress.js';
+export { SpacedRepetitionService } from './services/spaced-repetition.js';
+export { ScheduleService } from './services/schedule.js';
 //# sourceMappingURL=index.js.map
