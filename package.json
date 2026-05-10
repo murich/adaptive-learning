@@ -13,14 +13,17 @@
   },
   "scripts": {
     "build": "tsc",
+    "prepare": "tsc",
     "test": "vitest run",
     "test:watch": "vitest"
   },
   "keywords": ["adaptive-learning", "spaced-repetition", "knowledge-tracking", "education"],
   "author": "murich",
   "license": "MIT",
+  "dependencies": {
+    "typescript": "^5.7.0"
+  },
   "devDependencies": {
-    "typescript": "^5.7.0",
     "vitest": "^3.0.0"
   }
 }
